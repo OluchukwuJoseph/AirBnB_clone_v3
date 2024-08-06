@@ -21,10 +21,7 @@ def get_state_cities(state_id):
     # Return 404 if state has no cities
     if len(state.cities) == 0:
         abort(404)
-    cities = []
-    for city in state.cities:
-        cities.append(city.to_dict())
-    return jsonify(cities)
+    return jsonify([city.to_dict() for city in state.cities])
 
 
 @app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
@@ -55,9 +52,9 @@ def delete_city(city_id):
 def create_city(state_id):
     """Create a city object"""
     # Check if user passed correct data
-    if not request.json:
+    if not request.get_json():
         abort(400, description="Not a JSON")
-    if 'name' not in request.json:
+    if 'name' not in request.get_json():
         abort(400, description="Missing name")
     state = storage.get(State, state_id)
     # Return 404 if state does not exist
@@ -75,16 +72,16 @@ def create_city(state_id):
 def update_state(city_id):
     """Update a city object"""
     # Check if user passed correct data
-    if not request.json:
+    if not request.get_json():
         abort(400, description="Not a JSON")
     city = storage.get(City, city_id)
     # Return 404 if state does not exist
     if not city:
         abort(404)
     data = request.get_json()
-    unchangeable_keys = ['id', 'state_id', 'created_at', 'updated_at']
+    unchangeable_attributes = ['id', 'state_id', 'created_at', 'updated_at']
     for key, value in data.items():
-        if key not in unchangeable_keys:
+        if key not in unchangeable_attributes:
             setattr(city, key, value)
     city.save()
     return make_response(jsonify(city.to_dict()), 200)
