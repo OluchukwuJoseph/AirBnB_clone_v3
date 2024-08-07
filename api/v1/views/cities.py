@@ -1,16 +1,13 @@
 #!/usr/bin/python3
-"""
-    This module contains views for City objects that handles
-    all default RESTFul API actions
-"""
+"""Contains views for City objects that handles RESTFul API actions"""
 from api.v1.views import app_views
-from flask import jsonify, abort, request, make_response
+from flask import jsonify, abort, request
 from models.city import City
 from models.state import State
 from models import storage
 
 
-@app_views.route('/states/<state_id>/cities', methods=['GET'],
+@app_views.route('/states/<string:state_id>/cities', methods=['GET'],
                  strict_slashes=False)
 def get_state_cities(state_id):
     """Retrieves the list of all cities object belonging to a state"""
@@ -24,7 +21,8 @@ def get_state_cities(state_id):
     return jsonify([city.to_dict() for city in state.cities])
 
 
-@app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/cities/<string:city_id>', methods=['GET'],
+                 strict_slashes=False)
 def get_city(city_id):
     """Retrieves a city object"""
     city = storage.get(City, city_id)
@@ -34,7 +32,8 @@ def get_city(city_id):
     return jsonify(city.to_dict())
 
 
-@app_views.route('/cities/<city_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/cities/<string:city_id>', methods=['DELETE'],
+                 strict_slashes=False)
 def delete_city(city_id):
     """Deletes a city object"""
     city = storage.get(City, city_id)
@@ -44,10 +43,10 @@ def delete_city(city_id):
     # Delete city and save to update
     storage.delete(city)
     storage.save()
-    return make_response(jsonify({}), 200)
+    return jsonify({}), 200
 
 
-@app_views.route('/states/<state_id>/cities', methods=['POST'],
+@app_views.route('/states/<string:state_id>/cities', methods=['POST'],
                  strict_slashes=False)
 def create_city(state_id):
     """Create a city object"""
@@ -65,10 +64,11 @@ def create_city(state_id):
     city = City(**data, state_id=state_id)
     storage.new(city)
     storage.save()
-    return make_response(jsonify(city.to_dict()), 201)
+    return jsonify(city.to_dict()), 201
 
 
-@app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/cities/<string:city_id>', methods=['PUT'],
+                 strict_slashes=False)
 def update_state(city_id):
     """Update a city object"""
     # Check if user passed correct data
@@ -84,4 +84,4 @@ def update_state(city_id):
         if key not in unchangeable_attributes:
             setattr(city, key, value)
     city.save()
-    return make_response(jsonify(city.to_dict()), 200)
+    return jsonify(city.to_dict()), 200

@@ -13,7 +13,7 @@ def retrieveStates():
     return jsonify([state.to_dict() for state in states])
 
 
-@app_views.route('/states/<state_id>', methods=['GET'])
+@app_views.route('/states/<string:state_id>', methods=['GET'])
 def getState(state_id):
     """retrieve a state object."""
     state = storage.get(State, state_id)
@@ -22,7 +22,7 @@ def getState(state_id):
     return jsonify(state.to_dict())
 
 
-@app_views.route('/states/<state_id>', methods=['DELETE'])
+@app_views.route('/states/<string:state_id>', methods=['DELETE'])
 def deleteState(state_id):
     """Delete a State object."""
     state = storage.get(State, state_id)
@@ -53,7 +53,7 @@ def createState():
     return jsonify(new_state.to_dict()), 201
 
 
-@app_views.route('/state/<state_id>', methods=['PUT'])
+@app_views.route('/state/<string:state_id>', methods=['PUT'])
 def updateState(state_id):
     """Update a State object."""
     state = storage.get(State, state_id)

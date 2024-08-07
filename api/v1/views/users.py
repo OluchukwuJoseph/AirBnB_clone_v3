@@ -1,10 +1,7 @@
 #!/usr/bin/python3
-"""
-    This module contains views for User objects that handles
-    all default RESTFul API actions
-"""
+"""Contains views for User objects that handles RESTFul API actions"""
 from api.v1.views import app_views
-from flask import jsonify, abort, request, make_response
+from flask import jsonify, abort, request
 from models import storage
 from models.user import User
 
@@ -16,7 +13,8 @@ def get_users():
     return jsonify([user.to_dict() for user in users])
 
 
-@app_views.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/users/<string:user_id>', methods=['GET'],
+                 strict_slashes=False)
 def get_user(user_id):
     """Retrieve a user object"""
     user = storage.get(User, user_id)
@@ -26,7 +24,8 @@ def get_user(user_id):
     return jsonify(user.to_dict())
 
 
-@app_views.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/users/<string:user_id>', methods=['DELETE'],
+                 strict_slashes=False)
 def delete_user(user_id):
     """Delete User object"""
     user = storage.get(User, user_id)
@@ -35,7 +34,7 @@ def delete_user(user_id):
         abort(404)
     storage.delete(user)
     storage.save()
-    return make_response(jsonify({}), 200)
+    return jsonify({}), 200
 
 
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
@@ -53,10 +52,11 @@ def create_user():
     user = User(**data)
     storage.new(user)
     storage.save()
-    return make_response(jsonify(user.to_dict()), 201)
+    return jsonify(user.to_dict()), 201
 
 
-@app_views.route('/users/<user_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/users/<string_user_id>', methods=['PUT'],
+                 strict_slashes=False)
 def update_user(user_id):
     """Update user"""
     # Check if user passed correct data
@@ -71,4 +71,4 @@ def update_user(user_id):
         if key not in unchangeable_atributes:
             setattr(user, key, value)
     user.save()
-    return make_response(jsonify(user.to_dict()), 200)
+    return jsonify(user.to_dict()), 200
