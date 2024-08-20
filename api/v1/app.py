@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-The first version of AirBnB clone Flask app
-"""
+""" The first version of AirBnB clone Flask app """
 from api.v1.views import app_views
 from flask import Flask, jsonify
 from models import storage
