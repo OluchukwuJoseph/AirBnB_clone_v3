@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 """The first version of AirBnB clone Flask app"""
 from api.v1.views import app_views
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify
 from models import storage
-from os import getenv
+import os
 
 
 app = Flask(__name__)
@@ -23,7 +23,13 @@ def teardown(self):
 
 
 if __name__ == '__main__':
-    host = ("0.0.0.0" if not getenv('HBNB_API_HOST')
-            else getenv('HBNB_API_HOST'))
-    port = 5000 if not getenv('HBNB_API_PORT') else getenv('HBNB_API_PORT')
-    app.run(host=host, port=port, threaded=True)
+    if os.getenv('HBNB_API_HOST'):
+        host = os.getenv('HBNB_API_HOST')
+    else:
+        host = "0.0.0.0"
+
+    if os.getenv('HBNB_API_PORT'):
+        port = os.getenv('HBNB_API_PORT')
+    else:
+        port = 5000
+    app.run(host, port, threaded=True, debug=True)
